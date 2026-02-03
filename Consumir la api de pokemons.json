@@ -1,0 +1,438 @@
+{
+  "name": "Consumir la api de pokemons",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -16
+      ],
+      "id": "eef42393-bf57-4f75-bbfd-a7b741ee0023",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RkOdXDT_OCLn8t8tIBeBtY_17aAs8feTnbkgUUVtwgQ",
+          "mode": "list",
+          "cachedResultName": "Pokemon Tabla de informacion",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RkOdXDT_OCLn8t8tIBeBtY_17aAs8feTnbkgUUVtwgQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pokemons",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RkOdXDT_OCLn8t8tIBeBtY_17aAs8feTnbkgUUVtwgQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -288,
+        -16
+      ],
+      "id": "65c8174a-cb1b-4731-96c2-5a0ec255aa6c",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://pokeapi.co/api/v2/pokemon/{{ $json.ID }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        128,
+        -16
+      ],
+      "id": "7854d3e2-a61c-4bd6-a40d-017d276568f6",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "43fabe97-ca7b-43e4-aff0-6d7071ec9fb5",
+              "name": "identificador",
+              "value": "={{ $json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "e56f8de8-441f-4525-b35f-2bf85fb5858d",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "0a7a275f-cfc9-453e-ba8e-650aa11ddb20",
+              "name": "type",
+              "value": "={{ $json.types[0].type.name }}",
+              "type": "string"
+            },
+            {
+              "id": "029d8784-5f53-444e-ac51-b90aeeaa6efe",
+              "name": "photos front",
+              "value": "={{ $json.sprites.front_default }}",
+              "type": "string"
+            },
+            {
+              "id": "5fe85078-3c76-402b-8990-c236863cffc7",
+              "name": "photos back",
+              "value": "={{ $json.sprites.back_default }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        -16
+      ],
+      "id": "ac1cf9da-9fa1-436a-b775-43bb89866a32",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1RkOdXDT_OCLn8t8tIBeBtY_17aAs8feTnbkgUUVtwgQ",
+          "mode": "list",
+          "cachedResultName": "Pokemon Tabla de informacion",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RkOdXDT_OCLn8t8tIBeBtY_17aAs8feTnbkgUUVtwgQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pokemons",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RkOdXDT_OCLn8t8tIBeBtY_17aAs8feTnbkgUUVtwgQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.identificador }}",
+            "Nombre": "={{ $json.name }}",
+            "Tipo": "={{ $json.type }}",
+            "Sprite Frontal": "={{ $json['photos front'] }}",
+            "Sprite Posterior": "={{ $json['photos back'] }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo",
+              "displayName": "Tipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sprite Frontal",
+              "displayName": "Sprite Frontal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sprite Posterior",
+              "displayName": "Sprite Posterior",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        -16
+      ],
+      "id": "7a581920-7dd0-45a2-89f3-1619961b0d21",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2e84ebe2-ac92-4177-a331-385be065fb17",
+              "leftValue": "={{ $json.Nombre }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "b94a56c3-1ef1-4122-a622-c478d5f016bb",
+              "leftValue": "={{ $json.Tipo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        -16
+      ],
+      "id": "61bb975a-5f17-4df3-8dd3-2a468b629d85",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "sendTo": "",
+        "subject": "El Proceso de migracion termino",
+        "message": "=<h1> Proceso termino </h1>\n<h2> Nuevos pokemosn ( {{ $json.ID.length }})<h/2>\n{{ $json.ID }}\n<br/>\n{{ $json.Nombre }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        -16
+      ],
+      "id": "97067afc-8655-44e9-ad81-99e6e550f6ae",
+      "name": "ENVIAR CORREO DE PROCESO",
+      "webhookId": "",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Nombre"
+            },
+            {
+              "fieldToAggregate": "ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        736,
+        -16
+      ],
+      "id": "8fe8f948-5330-40d1-8770-479597e8c465",
+      "name": "Agrupar resultados"
+    },
+    {
+      "parameters": {
+        "height": 256,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        688,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "6c391ac0-f4f7-4185-a1d4-ef41426dfab8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        -208
+      ],
+      "id": "d151f607-6364-4d36-856a-eb8daf85f9f9",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Agrupar resultados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agrupar resultados": {
+      "main": [
+        [
+          {
+            "node": "ENVIAR CORREO DE PROCESO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "579acfa1-0fa9-446d-9067-4fe4f0fdc57d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "14f0fe654df003f4dcfc0fe8155145bd4b3f8ffc9896d37645a5d9c7f433c75b"
+  },
+  "id": "fyHJeFS1NtFa6v81",
+  "tags": []
+}

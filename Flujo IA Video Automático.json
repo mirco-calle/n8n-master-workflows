@@ -1,0 +1,843 @@
+{
+  "name": "Flujo IA Video Automático",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "creacion  de video automatico",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Prompt",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Modelo",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "sora-2"
+                  },
+                  {
+                    "option": "sora-2-pro"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Tamaño",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "1280x720"
+                  },
+                  {
+                    "option": "720x1280"
+                  },
+                  {
+                    "option": "1024x1792"
+                  },
+                  {
+                    "option": "1792x1024"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Duracion",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "4"
+                  },
+                  {
+                    "option": "8"
+                  },
+                  {
+                    "option": "12"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Referencia",
+              "fieldType": "file",
+              "acceptFileTypes": ".jpg, .png, .webp"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -32,
+        32
+      ],
+      "id": "e6837e3d-ece2-4f6f-b274-61b60828eb47",
+      "name": "On form submission",
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "height": 304,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "d03bd3c3-3e1f-481e-aab2-879f0487cec7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f3b7765-e9cd-46a8-9473-752d28629071",
+              "name": "prompt",
+              "value": "={{ $json.Prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "5707f14c-3140-4ade-b909-e2eabe08fb4b",
+              "name": "tamano",
+              "value": "={{ $json['Tamaño'] }}",
+              "type": "string"
+            },
+            {
+              "id": "08f7d141-88d9-43b6-a054-057bc1a61f22",
+              "name": "modelo",
+              "value": "={{ $json.Modelo }}",
+              "type": "string"
+            },
+            {
+              "id": "9c7b895f-8ce3-457d-9ee6-61437a8b4aef",
+              "name": "segundos",
+              "value": "={{ $json.Duracion }}",
+              "type": "string"
+            },
+            {
+              "id": "6a548248-c848-40e7-81cf-f04b5c282c9e",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        32
+      ],
+      "id": "f1100f4f-bac5-4372-a595-f323424fc3b4",
+      "name": "variables"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e1c92f61-cece-45bf-8acb-50b8a4f5f3cf",
+              "leftValue": "={{ $('On form submission').item.json.Referencia[0].size }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        544,
+        32
+      ],
+      "id": "bef39169-28ac-48ed-9a65-cc36f446c24b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "{{$json.status}}",
+                    "rightValue": "completed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "30e950dc-5b06-4d88-8a17-2c8d6d1460c4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "completo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "59e4783a-6b68-4f1c-be20-48d6d42e4a57",
+                    "leftValue": "={{$json.status}}",
+                    "rightValue": "in_progres",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "En Progreso"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fc30e5a0-edff-4f4c-ae11-7d1c3ccf9ab1",
+                    "leftValue": "={{$json.status}}",
+                    "rightValue": "queued",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "En cola"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "dab0acc9-e9d8-4ed0-bbbf-9358fa8e7ad5",
+                    "leftValue": "={{$json.status}}",
+                    "rightValue": "failed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fallido"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        -16
+      ],
+      "id": "1c9f863f-b15c-4d0f-be31-7e943ab5090a",
+      "name": "Estado"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api.openai.com/v1/videos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.prompt }}"
+            },
+            {
+              "name": "model",
+              "value": "={{ $json.modelo }}"
+            },
+            {
+              "name": "size",
+              "value": "={{ $json.tamano }}"
+            },
+            {
+              "name": "seconds",
+              "value": "={{ $json.segundos }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "input_Reference",
+              "inputDataFieldName": "=Referencia"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        -48
+      ],
+      "id": "e4fc98bc-9f5d-4e3f-89e9-18b42fd47a47",
+      "name": "Video con referencia",
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://api.openai.com/v1/videos/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1120,
+        16
+      ],
+      "id": "b72a0fcb-ca03-4266-92c2-42ca27fa14cb",
+      "name": "Estado.",
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://api.openai.com/v1/videos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.Prompt }}"
+            },
+            {
+              "name": "model",
+              "value": "={{ $json.Modelo }}"
+            },
+            {
+              "name": "size",
+              "value": "={{ $json['Tamaño'] }}"
+            },
+            {
+              "name": "seconds",
+              "value": "={{ $json.segundos }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        224
+      ],
+      "id": "28a4a324-3574-437d-9fbb-f7bf91a85d29",
+      "name": "Video sin referencia",
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1648,
+        176
+      ],
+      "id": "e3e46d7e-5ed3-4813-809b-9188437742fe",
+      "name": "Espera",
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+      "sendTo": "",
+      "subject": "",
+      "message": "",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        64
+      ],
+      "id": "86b89305-e671-411b-80d4-508251a2bb4c",
+      "name": "Send a message",
+      "webhookId": "",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Gestion de errores",
+        "height": 272,
+        "width": 256,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1840,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "222d0e98-9d1c-4d7e-bd60-1797f925d6d1",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "url": "=http://api.openai.com/v1/videos/{{ $json.id }}/content",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1808,
+        -336
+      ],
+      "id": "73b80ec1-2bbc-42af-9503-3df4d1e327d5",
+      "name": "Descargar",
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=http://api.openai.com/v1/videos/{{ $json.id }}/content",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "variant",
+              "value": "thumbnail"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1808,
+        -160
+      ],
+      "id": "9bb57818-c7c9-4919-a298-7bd66817172d",
+      "name": "Miniatura",
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "{{$json.id}}.mp4",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1s3R22IoDirn0E4sCC_ceeVaIhQxHEcRy",
+          "mode": "list",
+          "cachedResultName": "sora",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1s3R22IoDirn0E4sCC_ceeVaIhQxHEcRy"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2144,
+        -336
+      ],
+      "id": "0d140c50-6d2b-444d-bb73-171ab3821b29",
+      "name": "Subir Video",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "{{$json.id}}.webp",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1s3R22IoDirn0E4sCC_ceeVaIhQxHEcRy",
+          "mode": "list",
+          "cachedResultName": "sora",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1s3R22IoDirn0E4sCC_ceeVaIhQxHEcRy"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2144,
+        -160
+      ],
+      "id": "efe42415-385c-4a87-93d3-9e9d07517f59",
+      "name": "Subir miniatura",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2400,
+        -240
+      ],
+      "id": "13e40a2e-3269-467e-aa51-54747b7f9a2b",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "content"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        -240
+      ],
+      "id": "e9421642-1394-4bd4-97f5-67cb23ae6c45",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Video generado con exito",
+        "completionMessage": "=<a href=\"{{$json.content[0].webViewLink}}\">\n<img src={{ $json.content[1].thumbnailLink }}>\n</a>\n<br>\n<b>\n<b>\n<a href=\"{{$json.content[0].webViewLink}}\">Descargar</a>\n</b>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        2816,
+        -240
+      ],
+      "id": "000a4d19-4eac-4435-a617-c01ba67d0253",
+      "name": "Form",
+      "webhookId": "80f75a10-bdb0-44f2-abc1-9b655c9b5ee4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "variables": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Video con referencia",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Video sin referencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estado": {
+      "main": [
+        [
+          {
+            "node": "Descargar",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Miniatura",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video con referencia": {
+      "main": [
+        [
+          {
+            "node": "Estado.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estado.": {
+      "main": [
+        [
+          {
+            "node": "Estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video sin referencia": {
+      "main": [
+        [
+          {
+            "node": "Estado.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera": {
+      "main": [
+        [
+          {
+            "node": "Estado.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar": {
+      "main": [
+        [
+          {
+            "node": "Subir Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Miniatura": {
+      "main": [
+        [
+          {
+            "node": "Subir miniatura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir Video": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir miniatura": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "2fb01d55-9e1d-40d0-ae6d-cdad6eab87fa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "14f0fe654df003f4dcfc0fe8155145bd4b3f8ffc9896d37645a5d9c7f433c75b"
+  },
+  "id": "ZUBEybSLuM8SD4MFmGbyt",
+  "tags": []
+}
